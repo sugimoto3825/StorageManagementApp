@@ -1,0 +1,4 @@
+[
+	{"text":"親", "id":"100", "children": [{"text":"子1", "id":"101", "children": null, "hasChildren":false}, {"text":"子2", "id":"102", "children": null, "hasChildren":false}], "hasChildren":false}
+	
+]

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Storage Management App</title>
+<link rel="stylesheet" th:href="@{/css/layer.css}" type="text/css">
+<link rel="stylesheet" href="js/jzaefferer-jquery-treeview-ea4fd39/jquery.treeview.css">
+<link rel="icon" href="data:,">
+<script type="text/javascript" src="js/jquery-1.2.6.js"></script>
+<script type="text/javascript" src="js/jzaefferer-jquery-treeview-ea4fd39/jquery.treeview.js"></script>
+<script type="text/javascript" src="js/jzaefferer-jquery-treeview-ea4fd39/jquery.treeview.async.js"></script>
+</head>
+<body>
+	<h1>収納管理アプリ</h1>
+<!--
+	<ul id="tree" class="layer" th:each = "obj: ${list}">
+		<li th:text="${obj.itemId}"></li>
+	</ul>
+!-->
+<!--
+	<ul id="layer">
+		<li>aaa</li>
+		<li>aa2
+			<ul>
+				<li>bbb</li>
+				<li>ccc</li>
+			</ul>
+		</li>
+	</ul>
+!-->
+	
+	<ul id="tree"></ul>
+	
+	<script>
+	document.write("<p>JavaScriptのテスト</p>");
+	</script>
+
+</body>
+</html>
+
+
+
+<script>
+	$(function() {
+		$("#tree").treeview({
+			//JSONファイル読み込みテスト
+			//ファイルは読み込めている。存在しないURLにするとエラー
+			//url: "js/test.json"
+			
+			//
+			//url: "@{/storage_app/tree}"
+			url: "storage_app/tree"
+		});
+	 });
+</script>
+
+
