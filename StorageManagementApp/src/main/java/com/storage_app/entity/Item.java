@@ -1,8 +1,8 @@
 package com.storage_app.entity;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Item {
 	@Id
-	@Column(name = "item_id")
+	@Column("item_id")
 	private String itemId;
 	
 	private String name;
@@ -21,7 +21,7 @@ public class Item {
 	
 	private Integer number;
 	
-	@Column(name = "picture_id")
+	@Column("picture_id")
 	private String pictureId;
 	
 	private String note;
