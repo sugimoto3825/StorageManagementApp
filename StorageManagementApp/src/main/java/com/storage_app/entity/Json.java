@@ -15,4 +15,5 @@ public class Json {
 	String text;
 	Json[] children;
 	Boolean hasChildren;
+	Boolean expanded;
 }

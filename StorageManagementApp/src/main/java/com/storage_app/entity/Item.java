@@ -17,6 +17,12 @@ public class Item {
 	
 	private String name;
 	
+	@Column("p_item_id")
+	private String parentItemId;
+	
+	@Column("c_no")
+	private Integer childNo;
+	
 	private String category;
 	
 	private Integer number;

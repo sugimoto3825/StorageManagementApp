@@ -1,4 +1,4 @@
-/*package com.storage_app.service;
+package com.storage_app.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +16,8 @@ public class ItemServiceImpl implements ItemService {
 	public Iterable<Item> selectAll(){
 		return repos.findAll();
 	}
-
+	
+	public Iterable<Item> selectChildrenById(String parentItemId){
+		return repos.getChildItems(parentItemId);
+	}
 }
-*/

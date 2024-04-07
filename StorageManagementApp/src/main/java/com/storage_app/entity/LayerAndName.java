@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Layer {
+public class LayerAndName {
 	@Column("layer_id1")
 	private Integer layerId1;
 
@@ -29,4 +29,7 @@ public class Layer {
 	@Id
 	@Column("item_id")
 	private String itemId;
+	
+	@Column("name")
+	private String itemName;
 }

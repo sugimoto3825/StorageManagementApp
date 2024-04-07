@@ -1,4 +1,4 @@
 [
-	{"text":"親", "id":"100", "children": [{"text":"子1", "id":"101", "children": null, "hasChildren":false}, {"text":"子2", "id":"102", "children": null, "hasChildren":false}], "hasChildren":false}
+	{"text":"親", "id":"100", "children": [{"text":"<a href=\"https://qiita.com/kimisyo/items/a4a181b6cd75a2ef37eb\">子1</a>", "id":"101", "children": null, "hasChildren":false, "expanded":false}, {"text":"子2", "id":"102", "children": null, "hasChildren":false, "expanded":false}], "hasChildren":false, "expanded":true}
 	
 ]
