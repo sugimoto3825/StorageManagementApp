@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Json {
+public class JsonNode {
 	@Id
 	String id;
 	String text;
-	Json[] children;
+	JsonNode[] children;
 	Boolean hasChildren;
 	Boolean expanded;
 }

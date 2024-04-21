@@ -46,7 +46,7 @@ function load(settings, root, child, container) {
 	        $(container).treeview({add: child});
 	    }
 	}, settings.ajax));
-	/*
+	
 	$.getJSON(settings.url, {root: root}, function(response) {
 		function createNode(parent) {
 			var current = $("<li/>").attr("id", this.id || "").html("<span>" + this.text + "</span>").appendTo(parent);
@@ -75,7 +75,7 @@ function load(settings, root, child, container) {
 		$.each(response, createNode, [child]);
         $(container).treeview({add: child});
     });
-    */
+    
 }
 
 var proxied = $.fn.treeview;

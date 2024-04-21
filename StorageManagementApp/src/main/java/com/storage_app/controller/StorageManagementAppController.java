@@ -2,19 +2,23 @@ package com.storage_app.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.storage_app.entity.Item;
-import com.storage_app.entity.Json;
+import com.storage_app.entity.JsonNode;
 import com.storage_app.entity.Layer;
 import com.storage_app.entity.LayerAndName;
+import com.storage_app.form.ItemForm;
 import com.storage_app.service.ItemService;
 import com.storage_app.service.LayerService;
 
@@ -26,6 +30,14 @@ public class StorageManagementAppController {
 
 		@Autowired
 		ItemService itemService;
+		
+		static List<JsonNode> wholeLayer;
+		
+		@ModelAttribute
+		public ItemForm setUpForm() {
+			ItemForm form = new ItemForm();
+			return form;
+		}
 		
 		@GetMapping
 		public String showLayer(Model model) {
@@ -48,25 +60,25 @@ public class StorageManagementAppController {
 		}
 		
 	@GetMapping("/tree")
-    public @ResponseBody List<Json> getTestTree(@RequestParam(name = "root") String root) {
+    public @ResponseBody List<JsonNode> getTestTree(@RequestParam(name = "root") String root) {
 //        return Arrays.asList(new Layer("001", "101", "orange"), new Layer("002", "102", "apple"));
 //		return Arrays.asList(new Json("001", "orange", ""));
-//		Json[] list = {new Json("002", "orange", null, false)};
+//		JsonNode[] list = {new Json("002", "orange", null, false)};
 //		return Arrays.asList(new Json("001", "fruit", list, false));
 		
-		List<Json> rtn = new ArrayList<Json>();
+		List<JsonNode> rtn = new ArrayList<JsonNode>();
 		
 		if("source".equals(root)) {
 			
 			rtn = getChildren("0000000000");
 			
-			List<Json> children = new ArrayList<Json>();
+			List<JsonNode> children = new ArrayList<JsonNode>();
 			children = getChildren(rtn.get(0).getId());
-			rtn.get(0).setChildren(children.toArray(new Json[children.size()]));
+			rtn.get(0).setChildren(children.toArray(new JsonNode[children.size()]));
 			for(int i = 0; i < children.size(); i++) {
-				List<Json> grandChildren = new ArrayList<Json>();
+				List<JsonNode> grandChildren = new ArrayList<JsonNode>();
 				grandChildren = getChildren(rtn.get(0).getChildren()[i].getId());
-				rtn.get(0).getChildren()[i].setChildren(grandChildren.toArray(new Json[grandChildren.size()]));
+				rtn.get(0).getChildren()[i].setChildren(grandChildren.toArray(new JsonNode[grandChildren.size()]));
 			}
 				
 			
@@ -81,54 +93,40 @@ public class StorageManagementAppController {
 		return rtn;
     }
 	
-	private Json makeJsonByLAN(LayerAryAndName lan, Json[] children) {
-//	private Json makeJson(LayerAndName lan, Json[] children) {
-		Json json = new Json();
-		
-		json.setId(lan.getItemId());
-		json.setText(lan.getItemName());
-		json.setChildren(children);
-		json.setHasChildren(false);
-		if(children.length > 0) {
-			json.setHasChildren(true);
-		}
-		
-		return json;
-	}
-	
-	private Json makeJsonByItem(Item item, Json[] children, Boolean expanded) {
-//		private Json makeJson(LayerAndName lan, Json[] children) {
-			Json json = new Json();
+	private JsonNode makeJsonNodeByItem(Item item, JsonNode[] children, Boolean expanded) {
+//		private Json makeJson(LayerAndName lan, JsonNode[] children) {
+		JsonNode json = new JsonNode();
 			
 			json.setId(item.getItemId());
 			json.setText(item.getName());
+			json.setText("<a href=\"javascript:getItem(" + item.getItemId() + ");\">" + item.getName() + "</a>");
 			json.setChildren(children);
-			json.setHasChildren(false);
-			/*			if(children.length > 0) {
-							json.setHasChildren(true);
-						}*/
+//			json.setHasChildren(true);
+			if(children.length > 0) {
+				json.setHasChildren(true);
+			}
 			json.setExpanded(expanded);
 			
 			return json;
 		}
 	
-	private  @ResponseBody List<Json> getChildren(String parentItemId) {
-		List<Json> rtn = new ArrayList<Json>();
-		Json[] children = {};
+	private  @ResponseBody List<JsonNode> getChildren(String parentItemId) {
+		List<JsonNode> rtn = new ArrayList<JsonNode>();
+		JsonNode[] children = {};
 		
 		Iterable<Item> list = itemService.selectChildrenById(parentItemId);
 		
 		for(Item i : list) {
-			rtn.add(makeJsonByItem(i, children, false));
+			rtn.add(makeJsonNodeByItem(i, children, false));
 		}
 		
 		return rtn;
 	}
 	
 	/* 階層情報の全データを表示する */
-	private  @ResponseBody List<Json> showAll() {
-		List<Json> rtn = new ArrayList<Json>();
-		List<Json> children = new ArrayList<Json>();
+	private  @ResponseBody List<JsonNode> showAll() {
+		List<JsonNode> rtn = new ArrayList<JsonNode>();
+		List<JsonNode> children = new ArrayList<JsonNode>();
 		ArrayList<LayerAryAndName> alist = new ArrayList<LayerAryAndName>();
 		
 		Iterable<LayerAndName> list = layerService.selectAll();
@@ -148,8 +146,8 @@ public class StorageManagementAppController {
 		return rtn;
 	}
 	
-	private void searchTree(ArrayList<LayerAryAndName> pAry, int pX, int pY, List<Json> pParent, List<Json> pChildren, boolean next) {
-		pChildren = new ArrayList<Json>();
+	private void searchTree(ArrayList<LayerAryAndName> pAry, int pX, int pY, List<JsonNode> pParent, List<JsonNode> pChildren, boolean next) {
+		pChildren = new ArrayList<JsonNode>();
 		boolean existNextChild = true;
 		boolean existNextLayer = true;
 		
@@ -176,8 +174,52 @@ public class StorageManagementAppController {
 			} while(existNextChild);
 		}
 		else {
-//			pChildren.add(makeJson(pAry.get(pX), pChildren.toArray(new Json[pChildren.size()])));
+//			pChildren.add(makeJson(pAry.get(pX), pChildren.toArray(new JsonNode[pChildren.size()])));
 			return;
 		}
 	}
+	
+//	@GetMapping("/{id}")
+//    public String getItem(ItemForm itemForm, @PathVariable String id, Model model) {
+//		Optional<Item> itemOpt = itemService.selectById(id);
+//		Optional<ItemForm> itemFormOpt = itemOpt.map(t -> makeItemForm(t));
+//		itemForm = itemFormOpt.orElse(null);
+//		model.addAttribute("itemForm", itemForm);
+//		
+//		return "crud";
+//    }
+	
+	@GetMapping("/{id}")
+	@ResponseBody
+	public String getItem(ItemForm itemForm, @PathVariable Integer id, Model model) {
+		Optional<Item> itemOpt = itemService.selectById(String.format("%010d", id));
+		return itemOpt.get().getName();
+	}
+	
+//	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+//	public @ResponseBody void getItem(ItemForm itemForm, @PathVariable String id, Model model) {
+//		Optional<Item> itemOpt = itemService.selectById(id);
+//		Optional<ItemForm> itemFormOpt = itemOpt.map(t -> makeItemForm(t));
+//		itemForm = itemFormOpt.orElse(null);
+//		model.addAttribute("itemForm", itemForm);
+//    }
+//	
+	
+	private ItemForm makeItemForm(Item item){
+		ItemForm itemForm = new ItemForm();
+		itemForm.setItemId(item.getItemId());
+		itemForm.setName(item.getName());
+		itemForm.setParentItemId(item.getParentItemId());
+		itemForm.setChildNo(item.getChildNo());
+		itemForm.setCategory(item.getCategory());
+		itemForm.setNumber(item.getNumber());
+		itemForm.setPictureId(item.getPictureId());
+		itemForm.setNote(item.getNote());
+		itemForm.setTag1(item.getTag1());
+		itemForm.setTag2(item.getTag2());
+		itemForm.setTag3(item.getTag3());
+
+		return itemForm;
+	}
+	
 }
