@@ -12,24 +12,38 @@
 <script type="text/javascript" src="js/jzaefferer-jquery-treeview-ea4fd39/jquery.treeview.async.js"></script>
 
 <style type="text/css">
+h1{
+	background-color: black;
+	color: white;
+}
 div.inline-block{
 	display: inline-block;
 }
 .displayBox{
-height:300px;
-width:300px;
-position:absolute;
-top:20%;
-left:50%;
-margin-top:-100px;
-margin-left:-250px;
-border:solid 1px #666666;
+	height:350px;
+	width:300px;
+	position:absolute;
+	top:20%;
+	left:50%;
+	margin-top:-100px;
+	margin-left:-250px;
+	border:solid 1px #666666;
 }
+.center{
+	text-align: center;
+}
+input.readonly{
+	background-color: gray;
+}
+
 
 </style>
 </head>
 <body>
 	<h1>収納管理アプリ</h1>
+	<br>
+	<input type="button" value="アイテム追加" onclick="createItem()">
+	<br>
 	
 	<div class = "inline-block">
 		<div>
@@ -38,9 +52,49 @@ border:solid 1px #666666;
 		
 		<div>
 			<div class = "displayBox">
-					<form method = "POST" th:object = "${itemForm}">
-						<lable>名称：</lable>
+					<form id = "itemForm" th:object = "${itemForm}">
+						<label>選択アイテム詳細</label>
+						<br><br>
+						<!-- 表示項目 !-->
+						<label>　　　ID：</label>
+						<input id = "itemId" type = "text" th:field = "*{itemId}" class = "readonly" readonly>
+						<br>
+						<label>　　親ID：</label>
+						<input id = "parentItemId" type = "text" th:field = "*{parentItemId}" class = "readonly" readonly>
+						<br>
+						
+						<!-- 入力項目 !-->
+						<label>　　名称：</label>
 						<input id = "itemName" type = "text" th:field = "*{name}">
+						<br>
+						<label>　　分類：</label>
+						<input id = "itemCategory" type = "text" th:field = "*{category}">
+						<br>
+						<label>　　個数：</label>
+						<input id = "itemNumber" type = "text" th:field = "*{number}">
+						<br>
+						<label>　　メモ：</label>
+						<input id = "itemNote" type = "text" th:field = "*{note}">
+						<br>
+						<label>　 タグ1：</label>
+						<input id = "itemTag1" type = "text" th:field = "*{tag1}">
+						<br>
+						<label>　 タグ2：</label>
+						<input id = "itemTag2" type = "text" th:field = "*{tag2}">
+						<br>
+						<label>　 タグ3：</label>
+						<input id = "itemTag3" type = "text" th:field = "*{tag3}">
+						<br>
+						<label>　　画像：</label>
+						<input id = "pictureId" type = "text" th:field = "*{pictureId}">
+						
+						<!-- 非表示項目 !-->
+						<input id = "childNo" type = "hidden" th:field = "*{childNo}">
+						<br>
+						<div class = "center">
+							<input type="button" value="登録" onclick="updateItem()">
+							<input type="button" value="削除" onclick="deleteItem()">
+						</div>
 					</form>
 			</div>
 		</div>
@@ -62,14 +116,14 @@ border:solid 1px #666666;
 		});
 	}
 	
+	// アイテム情報取得
 	function getItem(id){
-		// Ajax通信テスト ボタンクリック
 		$.ajax({
 			type		: "GET",
 			url			: "storage_app/" + id,
-			dataType	: "string",
+			dataType	: "json",
 			success		: function(data) {
-							success(data);
+							getItemSuccess(data);
 						},
 			error		: function(XMLHttpRequest, textStatus, errorThrown) {
 							error(XMLHttpRequest, textStatus, errorThrown);
@@ -77,19 +131,117 @@ border:solid 1px #666666;
 		});
 	};
 	
-	// Ajax通信成功時処理
-	function success(data) {
-		alert("success:" + data);
+	// アイテム情報取得 Ajax通信成功時処理
+	function getItemSuccess(data) {
+		//alert("success:" + data);
 	
-		document.getElementById("itemName").value = data;
+		document.getElementById("itemName").value = data.name;
+		document.getElementById("itemCategory").value = data.category;
+		document.getElementById("itemNumber").value = data.number;
+		document.getElementById("itemNote").value = data.note;
+		document.getElementById("itemTag1").value = data.tag1;
+		document.getElementById("itemTag2").value = data.tag2;
+		document.getElementById("itemTag3").value = data.tag3;
+		document.getElementById("pictureId").value = data.pictureId;
+		document.getElementById("itemId").value = data.itemId;
+		document.getElementById("parentItemId").value = data.parentItemId;
+		document.getElementById("childNo").value = data.childNo;
 	}
 	
+	// アイテム情報登録
+	function updateItem(){
+		if(document.getElementById("itemId").value == ''){
+			//新規登録
+			$.ajax({
+				type		: "POST",
+				url			: "storage_app/insert",
+				dataType	: "text",
+				data        : $("form").serialize(),
+				success		: function(data) {
+								//alert("success:" + data);
+								updateTree();
+							},
+				error		: function(XMLHttpRequest, textStatus, errorThrown) {
+								error(XMLHttpRequest, textStatus, errorThrown);
+							}
+			});
+		}
+		else{
+			//更新
+			$.ajax({
+				type		: "POST",
+				url			: "storage_app/update",
+				dataType	: "text",
+				data        : $("form").serialize(),
+				success		: function(data) {
+								//alert("success:" + data);
+							},
+				error		: function(XMLHttpRequest, textStatus, errorThrown) {
+								error(XMLHttpRequest, textStatus, errorThrown);
+							}
+			});
+		}
+	};
+
+	// アイテム情報削除
+	function deleteItem(){
+		$.ajax({
+			type		: "POST",
+			url			: "storage_app/delete",
+			dataType	: "text",
+			data        : {itemId : document.getElementById("itemId").value},
+			success		: function(data) {
+								//alert("success:" + data);
+								updateTree();
+								clearItem();
+						},
+			error		: function(XMLHttpRequest, textStatus, errorThrown) {
+							error(XMLHttpRequest, textStatus, errorThrown);
+						}
+		});
+	};
+
+
 	// Ajax通信失敗時処理
 	function error(XMLHttpRequest, textStatus, errorThrown) {
 		alert("error:" + XMLHttpRequest);
 		alert("status:" + textStatus);
 		alert("errorThrown:" + errorThrown);
 	}
+	
+	function createItem(){
+		//選択中のアイテムIDを親IDに設定
+		parentItemId = document.getElementById("itemId").value;
+		
+		//アイテム登録フォームの初期化
+		document.getElementById("itemName").value = null;
+		document.getElementById("itemCategory").value = null;
+		document.getElementById("itemNumber").value = null;
+		document.getElementById("itemNote").value = null;
+		document.getElementById("itemTag1").value = null;
+		document.getElementById("itemTag2").value = null;
+		document.getElementById("itemTag3").value = null;
+		document.getElementById("pictureId").value = null;
+		document.getElementById("itemId").value = null;
+		document.getElementById("parentItemId").value = parentItemId;
+		document.getElementById("childNo").value = null;
+	}
+
+	function clearItem(){
+		//アイテム登録フォームの初期化
+		document.getElementById("itemName").value = null;
+		document.getElementById("itemCategory").value = null;
+		document.getElementById("itemNumber").value = null;
+		document.getElementById("itemNote").value = null;
+		document.getElementById("itemTag1").value = null;
+		document.getElementById("itemTag2").value = null;
+		document.getElementById("itemTag3").value = null;
+		document.getElementById("pictureId").value = null;
+		document.getElementById("itemId").value = null;
+		document.getElementById("parentItemId").value = null;
+		document.getElementById("childNo").value = null;
+	}
+
 </script>
 
 

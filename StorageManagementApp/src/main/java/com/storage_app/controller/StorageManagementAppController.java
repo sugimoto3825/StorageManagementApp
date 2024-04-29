@@ -7,9 +7,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -70,7 +73,7 @@ public class StorageManagementAppController {
 		
 		if("source".equals(root)) {
 			
-			rtn = getChildren("0000000000");
+			rtn = getChildren(0);
 			
 			List<JsonNode> children = new ArrayList<JsonNode>();
 			children = getChildren(rtn.get(0).getId());
@@ -84,8 +87,8 @@ public class StorageManagementAppController {
 			
 		}
 		else {
-//			Integer id = Integer.parseInt(root);
-			rtn = getChildren(root);
+			Integer id = Integer.parseInt(root);
+			rtn = getChildren(id);
 		}
 
 		
@@ -110,7 +113,7 @@ public class StorageManagementAppController {
 			return json;
 		}
 	
-	private  @ResponseBody List<JsonNode> getChildren(String parentItemId) {
+	private  @ResponseBody List<JsonNode> getChildren(Integer parentItemId) {
 		List<JsonNode> rtn = new ArrayList<JsonNode>();
 		JsonNode[] children = {};
 		
@@ -191,9 +194,9 @@ public class StorageManagementAppController {
 	
 	@GetMapping("/{id}")
 	@ResponseBody
-	public String getItem(ItemForm itemForm, @PathVariable Integer id, Model model) {
-		Optional<Item> itemOpt = itemService.selectById(String.format("%010d", id));
-		return itemOpt.get().getName();
+	public ItemForm getItem(ItemForm itemForm, @PathVariable Integer id, Model model) {
+		Optional<Item> itemOpt = itemService.selectById(id);
+		return makeItemForm(itemOpt.get());
 	}
 	
 //	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -204,6 +207,53 @@ public class StorageManagementAppController {
 //		model.addAttribute("itemForm", itemForm);
 //    }
 //	
+	
+	@PostMapping("/insert")
+	@ResponseBody
+	public Integer insertItem(
+			@Validated ItemForm itemForm
+			,BindingResult result
+			) {
+		Item item = new Item();
+		Integer itemId = null;
+		
+		if(result.hasErrors() == false) {
+			item = makeItem(itemForm);
+			
+			itemId = itemService.insertItem(item);
+			//itemService.insertItem(item);
+		}
+		return itemId;
+		//return "crud";
+	}
+	
+	@PostMapping("/update")
+	@ResponseBody
+	public Integer updateItem(
+			@Validated ItemForm itemForm
+			,BindingResult result
+			) {
+		Item item = new Item();
+		Integer itemId = null;
+		
+		if(result.hasErrors() == false) {
+			item = makeItem(itemForm);
+			itemId = item.getItemId();
+			
+			itemService.updateItem(item);
+		}
+		return itemId;
+	}
+
+	
+	@PostMapping("/delete")
+	@ResponseBody
+	public Integer deleteItem(
+			@RequestParam String itemId
+			) {
+		itemService.deleteItemById(Integer.parseInt(itemId));
+		return null;
+	}
 	
 	private ItemForm makeItemForm(Item item){
 		ItemForm itemForm = new ItemForm();
@@ -220,6 +270,22 @@ public class StorageManagementAppController {
 		itemForm.setTag3(item.getTag3());
 
 		return itemForm;
+	}
+	
+	private Item makeItem(ItemForm itemForm) {
+		Item item = new Item();
+		item.setItemId(itemForm.getItemId());
+		item.setName(itemForm.getName());
+		item.setParentItemId(itemForm.getParentItemId());
+		item.setChildNo(itemForm.getChildNo());
+		item.setCategory(itemForm.getCategory());
+		item.setNumber(itemForm.getNumber());
+		item.setPictureId(itemForm.getPictureId());
+		item.setNote(itemForm.getNote());
+		item.setTag1(itemForm.getTag1());
+		item.setTag2(itemForm.getTag2());
+		item.setTag3(itemForm.getTag3());
+		return item;
 	}
 	
 }

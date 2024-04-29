@@ -19,11 +19,30 @@ public class ItemServiceImpl implements ItemService {
 		return repos.findAll();
 	}
 	
-	public Optional<Item> selectById(String ItemId){
+	public Optional<Item> selectById(Integer ItemId){
 		return repos.findById(ItemId);
 	}
 	
-	public Iterable<Item> selectChildrenById(String parentItemId){
+	public Iterable<Item> selectChildrenById(Integer parentItemId){
 		return repos.getChildItems(parentItemId);
+	}
+	
+	//登録
+	public Integer insertItem(Item item) {
+		Integer childNo = repos.getMaxChildNo(item.getParentItemId()) + 1;
+		item.setChildNo(childNo);
+		
+		Item insItem = repos.save(item);
+		return insItem.getItemId();
+	}
+	
+	//更新
+	public void updateItem(Item item) {
+		repos.save(item);
+	}
+	
+	//削除
+	public void deleteItemById(Integer ItemId) {
+		repos.deleteById(ItemId);
 	}
 }

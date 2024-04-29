@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class JsonNode {
 	@Id
-	String id;
+	Integer id;
 	String text;
 	JsonNode[] children;
 	Boolean hasChildren;

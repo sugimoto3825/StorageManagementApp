@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemForm {
-	private String itemId;
+	private Integer itemId;
 	
 	private String name;
 	
-	private String parentItemId;
+	private Integer parentItemId;
 	
 	private Integer childNo;
 	

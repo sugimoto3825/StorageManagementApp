@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 public class Item {
 	@Id
 	@Column("item_id")
-	private String itemId;
+	private Integer itemId;
 	
 	private String name;
 	
 	@Column("p_item_id")
-	private String parentItemId;
+	private Integer parentItemId;
 	
 	@Column("c_no")
 	private Integer childNo;
