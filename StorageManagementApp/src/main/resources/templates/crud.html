@@ -94,6 +94,13 @@ input.readonly{
 							<input type="button" value="登録" onclick="updateItem()">
 							<input type="button" value="削除" onclick="deleteItem()">
 						</div>
+						
+						<!-- エラーメッセージ !-->
+					    <ul id = "errorList">
+						    <li th:each ="error:${#fields.detailedErrors()}">
+								<span th:text ="${error.message}"> Error message</span>
+							</li>
+						</ul>
 					</form>
 			</div>
 		</div>
@@ -149,16 +156,26 @@ input.readonly{
 	
 	// アイテム情報登録
 	function updateItem(){
+		//エラーメッセージのクリア
+		clearErrorMessages();
+		
 		if(document.getElementById("itemId").value == ''){
 			//新規登録
 			$.ajax({
 				type		: "POST",
 				url			: "storage_app/insert",
-				dataType	: "text",
+				dataType	: "json",
 				data        : $("form").serialize(),
 				success		: function(data) {
 								//alert("success:" + data);
-								updateTree();
+								if(data.length > 0){
+									//エラーありの場合、エラーメッセージ表示
+									displayErrorMessages(data);
+								}
+								else{
+									//エラーなしの場合、画面初期化
+									updateTree();	
+								}
 							},
 				error		: function(XMLHttpRequest, textStatus, errorThrown) {
 								error(XMLHttpRequest, textStatus, errorThrown);
@@ -170,10 +187,14 @@ input.readonly{
 			$.ajax({
 				type		: "POST",
 				url			: "storage_app/update",
-				dataType	: "text",
+				dataType	: "json",
 				data        : $("form").serialize(),
 				success		: function(data) {
 								//alert("success:" + data);
+								if(data.length > 0){
+									//エラーありの場合、エラーメッセージ表示
+									displayErrorMessages(data);
+								}
 							},
 				error		: function(XMLHttpRequest, textStatus, errorThrown) {
 								error(XMLHttpRequest, textStatus, errorThrown);
@@ -208,6 +229,7 @@ input.readonly{
 		alert("errorThrown:" + errorThrown);
 	}
 	
+	//アイテム追加
 	function createItem(){
 		//選択中のアイテムIDを親IDに設定
 		parentItemId = document.getElementById("itemId").value;
@@ -224,10 +246,13 @@ input.readonly{
 		document.getElementById("itemId").value = null;
 		document.getElementById("parentItemId").value = parentItemId;
 		document.getElementById("childNo").value = null;
+		
+		//エラーメッセージのクリア
+		clearErrorMessages();
 	}
 
+	//アイテム登録フォームの初期化
 	function clearItem(){
-		//アイテム登録フォームの初期化
 		document.getElementById("itemName").value = null;
 		document.getElementById("itemCategory").value = null;
 		document.getElementById("itemNumber").value = null;
@@ -239,6 +264,27 @@ input.readonly{
 		document.getElementById("itemId").value = null;
 		document.getElementById("parentItemId").value = null;
 		document.getElementById("childNo").value = null;
+	}
+	
+	//エラーメッセージのクリア
+	function clearErrorMessages(errors){
+		var ul = document.getElementById('errorList');
+		
+		while (ul.firstChild) {
+   			ul.removeChild(ul.firstChild);
+  		}
+	}
+	
+	//エラーメッセージの表示
+	function displayErrorMessages(errors){
+		var ul = document.getElementById('errorList');
+		
+		for(let i = 0; i < errors.length; i++){
+			var li = document.createElement('li');
+			li.textContent = errors[i];
+			console.log(errors[i]);
+			ul.appendChild(li);
+		}
 	}
 
 </script>

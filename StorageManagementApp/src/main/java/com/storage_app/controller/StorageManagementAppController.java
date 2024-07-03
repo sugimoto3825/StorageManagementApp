@@ -2,12 +2,15 @@ package com.storage_app.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,6 +32,9 @@ public class StorageManagementAppController {
 	ItemService itemService;
 	
 	static List<JsonNode> wholeLayer;
+	
+	@Autowired
+	MessageSource messages;
 	
 	@ModelAttribute
 	public ItemForm setUpForm() {
@@ -105,37 +111,50 @@ public class StorageManagementAppController {
 	
 	@PostMapping("/insert")
 	@ResponseBody
-	public Integer insertItem(
+	public List<String> insertItem(
 			@Validated ItemForm itemForm
 			,BindingResult result
 			) {
 		Item item = new Item();
-		Integer itemId = null;
+		
+		List<String> errorMessages = new ArrayList<String>();
 		
 		if(result.hasErrors() == false) {
 			item = makeItem(itemForm);
 			
-			itemId = itemService.insertItem(item);
+			itemService.insertItem(item);
 		}
-		return itemId;
+		else {
+			//エラーメッセージの取得
+	        for (ObjectError error : result.getAllErrors()) {
+	        	errorMessages.add(messages.getMessage(error, Locale.JAPAN));
+	        }
+		}
+		return errorMessages;
 	}
 	
 	@PostMapping("/update")
 	@ResponseBody
-	public Integer updateItem(
+		public List<String>  updateItem(
 			@Validated ItemForm itemForm
 			,BindingResult result
 			) {
 		Item item = new Item();
-		Integer itemId = null;
+		
+		List<String> errorMessages = new ArrayList<String>();
 		
 		if(result.hasErrors() == false) {
 			item = makeItem(itemForm);
-			itemId = item.getItemId();
 			
 			itemService.updateItem(item);
 		}
-		return itemId;
+		else {
+			//エラーメッセージの取得
+	        for (ObjectError error : result.getAllErrors()) {
+	        	errorMessages.add(messages.getMessage(error, Locale.JAPAN));
+	        }
+		}
+		return errorMessages;
 	}
 
 	
