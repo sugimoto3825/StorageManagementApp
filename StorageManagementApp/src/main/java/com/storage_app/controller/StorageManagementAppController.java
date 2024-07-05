@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.storage_app.entity.Item;
 import com.storage_app.entity.JsonNode;
+import com.storage_app.form.GroupOrder;
 import com.storage_app.form.ItemForm;
 import com.storage_app.service.ItemService;
 
@@ -112,7 +113,7 @@ public class StorageManagementAppController {
 	@PostMapping("/insert")
 	@ResponseBody
 	public List<String> insertItem(
-			@Validated ItemForm itemForm
+			@Validated(GroupOrder.class) ItemForm itemForm
 			,BindingResult result
 			) {
 		Item item = new Item();
@@ -136,7 +137,7 @@ public class StorageManagementAppController {
 	@PostMapping("/update")
 	@ResponseBody
 		public List<String>  updateItem(
-			@Validated ItemForm itemForm
+			@Validated(GroupOrder.class) ItemForm itemForm
 			,BindingResult result
 			) {
 		Item item = new Item();

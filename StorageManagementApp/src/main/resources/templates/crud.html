@@ -5,38 +5,13 @@
 <meta charset="UTF-8">
 <title>Storage Management App</title>
 <link rel="stylesheet" href="js/jzaefferer-jquery-treeview-ea4fd39/jquery.treeview.css">
+<link rel="stylesheet" href="css/style.css" type="text/css">
 <link rel="icon" href="data:,">
 <script type="text/javascript" src="js/jquery-1.2.6.js"></script>
 <script type="text/javascript" src="js/jzaefferer-jquery-treeview-ea4fd39/jquery.treeview.js"></script>
 <script type="text/javascript" src="js/jzaefferer-jquery-treeview-ea4fd39/jquery.treeview.async.js"></script>
 
-<style type="text/css">
-h1{
-	background-color: black;
-	color: white;
-}
-div.inline-block{
-	display: inline-block;
-}
-.displayBox{
-	height:350px;
-	width:300px;
-	position:absolute;
-	top:20%;
-	left:50%;
-	margin-top:-100px;
-	margin-left:-250px;
-	border:solid 1px #666666;
-}
-.center{
-	text-align: center;
-}
-input.readonly{
-	background-color: gray;
-}
 
-
-</style>
 </head>
 <body>
 	<h1>収納管理アプリ</h1>
@@ -52,55 +27,98 @@ input.readonly{
 		<div>
 			<div class = "displayBox">
 					<form id = "itemForm" th:object = "${itemForm}">
-						<label>選択アイテム詳細</label>
-						<br><br>
+						<h2>選択アイテム詳細</h2>
+						
 						<!-- 表示項目 !-->
-						<label>　　　ID：</label>
-						<input id = "itemId" type = "text" th:field = "*{itemId}" class = "readonly" readonly>
-						<br>
-						<label>　　親ID：</label>
-						<input id = "parentItemId" type = "text" th:field = "*{parentItemId}" class = "readonly" readonly>
-						<br>
+						<ul>
+							<li>
+								<label>ID</label>
+								<br>
+								<input id = "itemId" type = "text" th:field = "*{itemId}" class = "readonly" readonly>
+							</li>
+							<li>
+								<label>親ID</label>
+								<br>
+								<input id = "parentItemId" type = "text" th:field = "*{parentItemId}" class = "readonly" readonly>
+							</li>
+						</ul>
 						
 						<!-- 入力項目 !-->
-						<label>　　名称：</label>
-						<input id = "itemName" type = "text" th:field = "*{name}">
-						<br>
-						<label>　　分類：</label>
-						<input id = "itemCategory" type = "text" th:field = "*{category}">
-						<br>
-						<label>　　個数：</label>
-						<input id = "itemNumber" type = "text" th:field = "*{number}">
-						<br>
-						<label>　　メモ：</label>
-						<input id = "itemNote" type = "text" th:field = "*{note}">
-						<br>
-						<label>　 タグ1：</label>
-						<input id = "itemTag1" type = "text" th:field = "*{tag1}">
-						<br>
-						<label>　 タグ2：</label>
-						<input id = "itemTag2" type = "text" th:field = "*{tag2}">
-						<br>
-						<label>　 タグ3：</label>
-						<input id = "itemTag3" type = "text" th:field = "*{tag3}">
-						<br>
-						<label>　　画像：</label>
-						<input id = "pictureId" type = "text" th:field = "*{pictureId}">
+						<ul>
+							<li>
+								<label>名称</label>
+								<br>
+								<input id = "itemName" type = "text" th:field = "*{name}">
+								<br>
+								<span class = "error" id = "msg_itemName"></span>
+							</li>
+							<li>
+								<label>個数</label>
+								<br>
+								<input id = "itemNumber" type = "text" th:field = "*{number}">
+								<br>
+								<span class = "error" id = "msg_itemNumber"></span>
+							</li>
+							<li>
+								<label>分類</label>
+								<br>
+								<input id = "itemCategory" type = "text" th:field = "*{category}">
+								<br>
+								<span class = "error" id = "msg_itemCategory"></span>
+							</li>
+						</ul>
+						<ul>
+							<li>
+								<label>タグ</label>
+								<br>
+								<input id = "itemTag1" type = "text" th:field = "*{tag1}">
+								<br>
+								<span class = "error" id = "msg_itemTag1"></span>
+							</li>
+							<li>
+								<br>
+								<input id = "itemTag2" type = "text" th:field = "*{tag2}">
+								<br>
+								<span class = "error" id = "msg_itemTag2"></span>
+							</li>
+							<li>
+								<br>
+								<input id = "itemTag3" type = "text" th:field = "*{tag3}">
+								<br>
+								<span class = "error" id = "msg_itemTag3"></span>
+							</li>
+						</ul>
+						<ul>
+							<li>
+								<label>メモ</label>
+								<br>
+								<textarea id = "itemNote" th:field = "*{note}" cols="30" rows="15"></textarea>
+								<br>
+								<span class = "error" id = "msg_itemNote"></span>
+							</li>
+							<li>
+								<label>画像</label>
+								<br>
+								<input id = "pictureId" type = "text" th:field = "*{pictureId}">
+								<br>
+								<div class = "image">No image</div>
+								<br>
+								<span class = "error" id = "msg_pictureId"></span>
+							</li>
+						</ul>
 						
 						<!-- 非表示項目 !-->
-						<input id = "childNo" type = "hidden" th:field = "*{childNo}">
-						<br>
-						<div class = "center">
+						<ul>
+							<li>
+								<input id = "childNo" type = "hidden" th:field = "*{childNo}">
+							</li>
+						</ul>
+						
+						<!-- ボタン !-->
+						<div style = "text-align: center;">
 							<input type="button" value="登録" onclick="updateItem()">
 							<input type="button" value="削除" onclick="deleteItem()">
 						</div>
-						
-						<!-- エラーメッセージ !-->
-					    <ul id = "errorList">
-						    <li th:each ="error:${#fields.detailedErrors()}">
-								<span th:text ="${error.message}"> Error message</span>
-							</li>
-						</ul>
 					</form>
 			</div>
 		</div>
@@ -124,6 +142,9 @@ input.readonly{
 	
 	// アイテム情報取得
 	function getItem(id){
+		//アイテム情報のクリア
+		createItem();
+		
 		$.ajax({
 			type		: "GET",
 			url			: "storage_app/" + id,
@@ -235,17 +256,8 @@ input.readonly{
 		parentItemId = document.getElementById("itemId").value;
 		
 		//アイテム登録フォームの初期化
-		document.getElementById("itemName").value = null;
-		document.getElementById("itemCategory").value = null;
-		document.getElementById("itemNumber").value = null;
-		document.getElementById("itemNote").value = null;
-		document.getElementById("itemTag1").value = null;
-		document.getElementById("itemTag2").value = null;
-		document.getElementById("itemTag3").value = null;
-		document.getElementById("pictureId").value = null;
-		document.getElementById("itemId").value = null;
+		clearItem();
 		document.getElementById("parentItemId").value = parentItemId;
-		document.getElementById("childNo").value = null;
 		
 		//エラーメッセージのクリア
 		clearErrorMessages();
@@ -264,26 +276,28 @@ input.readonly{
 		document.getElementById("itemId").value = null;
 		document.getElementById("parentItemId").value = null;
 		document.getElementById("childNo").value = null;
+		
+		//エラーメッセージのクリア
+		clearErrorMessages();
 	}
 	
 	//エラーメッセージのクリア
 	function clearErrorMessages(errors){
-		var ul = document.getElementById('errorList');
-		
-		while (ul.firstChild) {
-   			ul.removeChild(ul.firstChild);
-  		}
+		document.getElementById("msg_itemName").textContent = null;
+		document.getElementById("msg_itemCategory").textContent = null;
+		document.getElementById("msg_itemNumber").textContent = null;
+		document.getElementById("msg_itemNote").textContent = null;
+		document.getElementById("msg_itemTag1").textContent = null;
+		document.getElementById("msg_itemTag2").textContent = null;
+		document.getElementById("msg_itemTag3").textContent = null;
+		document.getElementById("msg_pictureId").textContent = null;
 	}
 	
 	//エラーメッセージの表示
 	function displayErrorMessages(errors){
-		var ul = document.getElementById('errorList');
-		
 		for(let i = 0; i < errors.length; i++){
-			var li = document.createElement('li');
-			li.textContent = errors[i];
-			console.log(errors[i]);
-			ul.appendChild(li);
+			var error = errors[i].split('：'); //error[0]:エラー項目 error[1]:エラーメッセージに分割
+			document.getElementById('msg_' + error[0]).textContent = error[1];
 		}
 	}
 
