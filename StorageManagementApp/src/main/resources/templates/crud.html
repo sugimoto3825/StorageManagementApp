@@ -180,7 +180,11 @@
 		//エラーメッセージのクリア
 		clearErrorMessages();
 		
-		if(document.getElementById("itemId").value == ''){
+		//登録するアイテムID、アイテム名の保持
+		let updId = document.getElementById("itemId").value;
+		let updName = document.getElementById("itemName").value;
+		
+		if(itemId == ''){
 			//新規登録
 			$.ajax({
 				type		: "POST",
@@ -215,6 +219,10 @@
 								if(data.length > 0){
 									//エラーありの場合、エラーメッセージ表示
 									displayErrorMessages(data);
+								}
+								else{
+									//エラーなしの場合、TreeView上のアイテム名を最新化
+									document.querySelector('#n' + updId + ' span a').textContent = updName;
 								}
 							},
 				error		: function(XMLHttpRequest, textStatus, errorThrown) {
