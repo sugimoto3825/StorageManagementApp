@@ -49,27 +49,17 @@ public class StorageManagementAppController {
 	}
 	
 	@GetMapping("/tree")
-    public @ResponseBody List<JsonNode> getTestTree(@RequestParam(name = "root") String root) {
+    public @ResponseBody List<JsonNode> getTree(@RequestParam(name = "root") String root) {
 		List<JsonNode> rtn = new ArrayList<JsonNode>();
 		
 		if("source".equals(root)) {
-			
-			rtn = getChildren(0);
-			
-			List<JsonNode> children = new ArrayList<JsonNode>();
-			children = getChildren(rtn.get(0).getId());
-			rtn.get(0).setChildren(children.toArray(new JsonNode[children.size()]));
-			for(int i = 0; i < children.size(); i++) {
-				List<JsonNode> grandChildren = new ArrayList<JsonNode>();
-				grandChildren = getChildren(rtn.get(0).getChildren()[i].getId());
-				rtn.get(0).getChildren()[i].setChildren(grandChildren.toArray(new JsonNode[grandChildren.size()]));
-			}
-				
-			
+			//ルートからすべてのノードを取得する
+			rtn = getDescendants(0);
 		}
 		else {
+			//指定したIDの子孫ノードを取得する（※現在この分岐は通らない）
 			Integer id = Integer.parseInt(root);
-			rtn = getChildren(id);
+			rtn = getDescendants(id);
 		}
 
 		return rtn;
@@ -82,27 +72,36 @@ public class StorageManagementAppController {
 			json.setText(item.getName());
 			json.setText("<a href=\"javascript:getItem(" + item.getItemId() + ");\">" + item.getName() + "</a>");
 			json.setChildren(children);
+			//HasChildren = Trueにすると読込中アイコンが表示されるため常にFalseにする
+			json.setHasChildren(false);
+			/*
 			if(children.length > 0) {
 				json.setHasChildren(true);
 			}
+			*/
 			json.setExpanded(expanded);
 			
 			return json;
 		}
 	
-	private  @ResponseBody List<JsonNode> getChildren(Integer parentItemId) {
+	private  @ResponseBody List<JsonNode> getDescendants(Integer parentItemId) {
 		List<JsonNode> rtn = new ArrayList<JsonNode>();
-		JsonNode[] children = {};
 		
+		//子ノードを取得する
 		Iterable<Item> list = itemService.selectChildrenById(parentItemId);
 		
-		for(Item i : list) {
-			rtn.add(makeJsonNodeByItem(i, children, false));
+		for(Item item : list) {
+			List<JsonNode> children = new ArrayList<JsonNode>();
+			
+			//孫ノードを取得する
+			children = getDescendants(item.getItemId());
+			JsonNode[] childrenArray = children.toArray(new JsonNode[children.size()]);
+			rtn.add(makeJsonNodeByItem(item, childrenArray, false));
 		}
 		
 		return rtn;
 	}
-	
+
 	@GetMapping("/{id}")
 	@ResponseBody
 	public ItemForm getItem(ItemForm itemForm, @PathVariable Integer id, Model model) {
