@@ -68,7 +68,7 @@ public class StorageManagementAppController {
 	private JsonNode makeJsonNodeByItem(Item item, JsonNode[] children, Boolean expanded) {
 		JsonNode json = new JsonNode();
 			
-			json.setId(item.getItemId());
+			json.setId("n" + item.getItemId().toString());
 			json.setText(item.getName());
 			json.setText("<a href=\"javascript:getItem(" + item.getItemId() + ");\">" + item.getName() + "</a>");
 			json.setChildren(children);
