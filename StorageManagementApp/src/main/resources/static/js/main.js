@@ -159,17 +159,10 @@ function createItem(){
 
 //アイテム登録フォームの初期化
 function clearItem(){
-	document.getElementById("itemName").value = null;
-	document.getElementById("itemCategory").value = null;
-	document.getElementById("itemNumber").value = null;
-	document.getElementById("itemNote").value = null;
-	document.getElementById("itemTag1").value = null;
-	document.getElementById("itemTag2").value = null;
-	document.getElementById("itemTag3").value = null;
-	document.getElementById("pictureId").value = null;
-	document.getElementById("itemId").value = null;
-	document.getElementById("parentItemId").value = null;
-	document.getElementById("childNo").value = null;
+	let elements = document.getElementById("itemForm").querySelectorAll("li input, textarea");
+	for(let i = 0; i < elements.length; i++){
+		elements[i].value = null;
+	}
 	
 	//エラーメッセージのクリア
 	clearErrorMessages();
@@ -177,14 +170,10 @@ function clearItem(){
 
 //エラーメッセージのクリア
 function clearErrorMessages(errors){
-	document.getElementById("msg_itemName").textContent = null;
-	document.getElementById("msg_itemCategory").textContent = null;
-	document.getElementById("msg_itemNumber").textContent = null;
-	document.getElementById("msg_itemNote").textContent = null;
-	document.getElementById("msg_itemTag1").textContent = null;
-	document.getElementById("msg_itemTag2").textContent = null;
-	document.getElementById("msg_itemTag3").textContent = null;
-	document.getElementById("msg_pictureId").textContent = null;
+	let elements = document.querySelectorAll("#itemForm .error");
+	for(let i = 0; i < elements.length; i++){
+		elements[i].textContent = null;
+	}
 }
 
 //エラーメッセージの表示
