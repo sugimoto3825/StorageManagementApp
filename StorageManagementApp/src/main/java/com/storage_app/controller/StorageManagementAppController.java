@@ -129,20 +129,24 @@ public class StorageManagementAppController {
 			) {
 		Item item = new Item();
 		
-		List<String> errorMessages = new ArrayList<String>();
+		List<String> rtnList = new ArrayList<String>(); //0番目の要素：アイテムID　１番目以降：エラーメッセージ
 		
 		if(result.hasErrors() == false) {
 			item = makeItem(itemForm);
 			
-			itemService.insertItem(item);
+			Integer itemId = itemService.insertItem(item);
+			rtnList.add(itemId.toString()); //アイテムIDをセット
 		}
 		else {
+			rtnList.add(null); //アイテムIDをセット
+			
 			//エラーメッセージの取得
 	        for (ObjectError error : result.getAllErrors()) {
-	        	errorMessages.add(messages.getMessage(error, Locale.JAPAN));
+	        	rtnList.add(messages.getMessage(error, Locale.JAPAN)); //エラーメッセージをセット
 	        }
 		}
-		return errorMessages;
+		
+		return rtnList;
 	}
 	
 	@PostMapping("/update")

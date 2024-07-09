@@ -202,13 +202,18 @@
 				data        : $("form").serialize(),
 				success		: function(data) {
 								//alert("success:" + data);
-								if(data.length > 0){
+								updId = data[0];
+								let errors = data.slice(1);
+								if(errors.length > 0){
 									//エラーありの場合、エラーメッセージ表示
-									displayErrorMessages(data);
+									displayErrorMessages(errors);
 								}
 								else{
-									//エラーなしの場合、画面初期化
-									updateTree();	
+									//エラーなしの場合、TreeViewの表示を最新化
+									updateTree();
+									
+									//新規採番したアイテムIDを表示
+									document.getElementById("itemId").value = updId;
 								}
 							},
 				error		: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -225,9 +230,10 @@
 				data        : $("form").serialize(),
 				success		: function(data) {
 								//alert("success:" + data);
-								if(data.length > 0){
+								let errors = data;
+								if(errors.length > 0){
 									//エラーありの場合、エラーメッセージ表示
-									displayErrorMessages(data);
+									displayErrorMessages(errors);
 								}
 								else{
 									//エラーなしの場合、TreeView上のアイテム名を最新化
