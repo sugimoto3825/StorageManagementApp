@@ -116,8 +116,8 @@
 						
 						<!-- ボタン !-->
 						<div style = "text-align: center;">
-							<input type="button" value="登録" onclick="updateItem()">
-							<input type="button" value="削除" onclick="deleteItem()">
+							<input type="button" id = "btnUpdate" value="登録" onclick="updateItem()">
+							<input type="button" id = "btnDelete" value="削除" onclick="deleteItem()">
 						</div>
 					</form>
 			</div>
@@ -173,6 +173,15 @@
 		document.getElementById("itemId").value = data.itemId;
 		document.getElementById("parentItemId").value = data.parentItemId;
 		document.getElementById("childNo").value = data.childNo;
+		
+		//アイテムの編集可否を切り替え
+		if(data.parentItemId == 0){
+			//ルートノードの場合は編集不可
+			changeItemUpdateStatus(false);
+		}
+		else{
+			changeItemUpdateStatus(true);
+		}	
 	}
 	
 	// アイテム情報登録
@@ -269,6 +278,9 @@
 		
 		//エラーメッセージのクリア
 		clearErrorMessages();
+		
+		//アイテム情報を編集可にする
+		changeItemUpdateStatus(true);
 	}
 
 	//アイテム登録フォームの初期化
@@ -307,6 +319,48 @@
 			var error = errors[i].split('：'); //error[0]:エラー項目 error[1]:エラーメッセージに分割
 			document.getElementById('msg_' + error[0]).textContent = error[1];
 		}
+	}
+	
+	//アイテム情報の編集可否を切り替え（readOnly == trueの場合、編集可）
+	function changeItemUpdateStatus(canChange){
+		if(canChange == true){
+			readOnly = false;
+			disabled = false;
+			
+			document.getElementById("itemName").classList.remove("readonly");
+			document.getElementById("itemCategory").classList.remove("readonly");
+			document.getElementById("itemNumber").classList.remove("readonly");
+			document.getElementById("itemNote").classList.remove("readonly");
+			document.getElementById("itemTag1").classList.remove("readonly");
+			document.getElementById("itemTag2").classList.remove("readonly");
+			document.getElementById("itemTag3").classList.remove("readonly");
+			document.getElementById("pictureId").classList.remove("readonly");
+		}
+		else{
+			readOnly = true;
+			disabled = true;
+			
+			document.getElementById("itemName").classList.add("readonly");
+			document.getElementById("itemCategory").classList.add("readonly");
+			document.getElementById("itemNumber").classList.add("readonly");
+			document.getElementById("itemNote").classList.add("readonly");
+			document.getElementById("itemTag1").classList.add("readonly");
+			document.getElementById("itemTag2").classList.add("readonly");
+			document.getElementById("itemTag3").classList.add("readonly");
+			document.getElementById("pictureId").classList.add("readonly");
+		}
+		
+		document.getElementById("itemName").readOnly = readOnly;
+		document.getElementById("itemCategory").readOnly = readOnly;
+		document.getElementById("itemNumber").readOnly = readOnly;
+		document.getElementById("itemNote").readOnly = readOnly;
+		document.getElementById("itemTag1").readOnly = readOnly;
+		document.getElementById("itemTag2").readOnly = readOnly;
+		document.getElementById("itemTag3").readOnly = readOnly;
+		document.getElementById("pictureId").readOnly = readOnly;
+		
+		document.getElementById("btnUpdate").disabled = disabled;
+		document.getElementById("btnDelete").disabled = disabled;
 	}
 
 </script>

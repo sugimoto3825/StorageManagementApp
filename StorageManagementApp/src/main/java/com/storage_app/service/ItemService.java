@@ -11,6 +11,9 @@ public interface ItemService {
 	Iterable<Item> selectChildrenById(Integer parentItemId);
 	
 	Optional<Item> selectById(Integer ItemId);
+	
+	//初期設定
+	void init();
 
 	//登録
 	Integer insertItem(Item item);

@@ -45,6 +45,18 @@ public class StorageManagementAppController {
 		
 	@GetMapping
 	public String displayInitPage() {
+		//ルートノードの存在チェック
+		Iterable<Item> rootItem = itemService.selectChildrenById(0);
+		Boolean rootExists = false;
+		for(Item item : rootItem) {
+			rootExists = true;
+			break;
+		}
+		//ルートノードが無い場合は初期設定を行う
+		if(rootExists == false) {
+			itemService.init();
+		}
+		
 		return "crud";
 	}
 	

@@ -42,7 +42,7 @@ div.inline-block{
 	font-size: normal;
 	/* border-radius: 5px; */
 }
-.displayBox ul input.readonly{
+.displayBox ul .readonly{
 	background-color: gray;
 }
 .displayBox div.image{

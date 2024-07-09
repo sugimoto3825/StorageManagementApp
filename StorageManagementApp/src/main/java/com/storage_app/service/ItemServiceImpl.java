@@ -27,6 +27,12 @@ public class ItemServiceImpl implements ItemService {
 		return repos.getChildItems(parentItemId);
 	}
 	
+	//初期設定
+	public void init() {
+		//ルートノードの作成
+		repos.insertRootItem();
+	};
+		
 	//登録
 	public Integer insertItem(Item item) {
 		Integer childNo = repos.getMaxChildNo(item.getParentItemId()) + 1;
