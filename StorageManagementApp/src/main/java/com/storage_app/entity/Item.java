@@ -12,22 +12,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Item {
 	@Id
-	@Column("item_id")
+	@Column("ITEM_ID")
 	private Integer itemId;
 	
 	private String name;
 	
-	@Column("p_item_id")
+	@Column("P_ITEM_ID")
 	private Integer parentItemId;
 	
-	@Column("c_no")
+	@Column("C_NO")
 	private Integer childNo;
 	
 	private String category;
 	
 	private Integer number;
 	
-	@Column("picture_id")
+	@Column("PICTURE_ID")
 	private String pictureId;
 	
 	private String note;
