@@ -1,0 +1,1 @@
+insert into ITEM values (1, '全データ', 0, 1, null, null, null, null, null, null, null);
